@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>Demo</title>
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width" />
+<base href="/" />
+<link rel="stylesheet" type="text/css"
+    href="/webjars/bootstrap/css/bootstrap.min.css" />
+<script type="text/javascript" src="/webjars/jquery/jquery.min.js"></script>
+<script type="text/javascript"
+    src="/webjars/bootstrap/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <h1>Login</h1>
+    <div class="container unauthenticated">
+        <div>
+            With GitHub: <a href="/oauth2/authorization/github">click here</a>
+        </div>
+        <div>
+            With Google: <a href="/oauth2/authorization/google">click here</a>
+        </div>
+    </div>
+    <div class="container authenticated" style="display: none">
+        Logged in as: <span id="user"></span>
+        <div>
+            <button onClick="logout()" class="btn btn-primary">Logout</button>
+        </div>
+        <div id="feed">
+
+        </div>
+        <label for="message_field">Message:</label>
+        <input type="text" id="message_field">
+        <button onclick="sendMessage()">Send Message</button>
+
+    </div>
+    <script type="text/javascript" src="/webjars/js-cookie/js.cookie.js"></script>
+    <script>
+        function createFeed(messages){
+            console.log(messages)
+            var feed = ""
+            messages.forEach(function(message) {
+                console.log(message)
+                feed += `<p><B>${message.name}:</B>  ${message.text}</p>`
+            })
+            document.getElementById("feed").innerHTML = feed
+        }
+        function sendMessage(){
+            // var xhr = new XMLHttpRequest();
+            // xhr.open("POST", "http://localhost:8080/messages", true);
+            // xhr.setRequestHeader('Content-Type', 'application/json');
+            // xhr.send(JSON.stringify({
+            //     name: "ed",
+            //     text: document.getElementById("message_field").value
+            // }));
+            url = "http://localhost:8080/messages"
+            fetch(url, {
+                method : "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: "ed",
+                    text: document.getElementById("message_field").value}),
+                // -- or --
+                // body : JSON.stringify({
+                // user : document.getElementById('user').value,
+                // ...
+                // })
+            }).then(
+                response => response.text() // .json(), etc.
+            ).then(
+                html => console.log(html)
+            ).then(
+                html =>
+                fetch(url, {
+                    method: "GET",
+                }).
+                then(response => response.json())
+                .then(body => createFeed(body))
+            );
+        }
+    </script>
+    <script type="text/javascript">
+          $.ajaxSetup({
+            beforeSend : function(xhr, settings) {
+              if (settings.type == 'POST' || settings.type == 'PUT'
+                  || settings.type == 'DELETE') {
+                if (!(/^http:.*/.test(settings.url) || /^https:.*/
+                    .test(settings.url))) {
+                  // Only send the token to relative URLs i.e. locally.
+                  xhr.setRequestHeader("X-XSRF-TOKEN", Cookies
+                      .get('XSRF-TOKEN'));
+                }
+              }
+            }
+          });
+          $.get("/user", function(data) {
+              $("#user").html(data.name);
+              $(".unauthenticated").hide();
+              $(".authenticated").show();
+          });
+          var logout = function() {
+            $.post("/logout", function() {
+              $("#user").html('');
+              $(".unauthenticated").show();
+              $(".authenticated").hide();
+            })
+            return true;
+          }
+        </script>
+</body>
+</html>

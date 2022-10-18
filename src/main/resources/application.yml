@@ -1,0 +1,24 @@
+spring:
+  h2:
+    console.enabled: true
+  datasource:
+    url: jdbc:h2:mem:mydb
+    username: sa
+    password: password
+    driverClassName: org.h2.Driver
+  jpa:
+    spring.jpa.database-platform: org.hibernate.dialect.H2Dialect
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: your-github-client-id
+            client-secret: your-github-client-secret
+          google:
+            client-id: your-google-client-id
+            client-secret: your-google-client-secret
+
+#logging:
+#  level:
+#    org.springframework.security: DEBUG

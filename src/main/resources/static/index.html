@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
 <meta charset="utf-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -7,83 +7,156 @@
 <meta name="description" content="" />
 <meta name="viewport" content="width=device-width" />
 <base href="/" />
-<link rel="stylesheet" type="text/css"
-    href="/webjars/bootstrap/css/bootstrap.min.css" />
+<!--<link rel="stylesheet" type="text/css"-->
+<!--    href="/webjars/bootstrap/css/bootstrap.min.css" />-->
 <script type="text/javascript" src="/webjars/jquery/jquery.min.js"></script>
-<script type="text/javascript"
-    src="/webjars/bootstrap/js/bootstrap.min.js"></script>
+<!--<script type="text/javascript"-->
+<!--    src="/webjars/bootstrap/js/bootstrap.min.js"></script>-->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+<link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+    <script type="text/javascript" src="/webjars/js-cookie/js.cookie.js"></script>
 </head>
 <body>
-    <h1>Login</h1>
-    <div class="container unauthenticated">
-        <div>
-            With GitHub: <a href="/oauth2/authorization/github">click here</a>
-        </div>
-        <div>
-            With Google: <a href="/oauth2/authorization/google">click here</a>
+<header class="p-3 text-bg-dark mb-5">
+    <div class="container">
+        <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+            <h1 class="me-lg-auto">OChat</h1>
+
+            <div class="float-end">
+<!--                <div class="authenticated" style="display: none">-->
+                <div class="unauthenticated">
+                    <button type="button" class="btn btn-outline-light me-2">
+                        <a style="color: inherit; text-decoration: inherit;" href="/oauth2/authorization/github">
+                            Log in with Github
+                        </a>
+                    </button>
+                </div>
+                <div class="authenticated" style="display: none">
+<!--                    <div class="authenticated" >-->
+                    Logged in as: <span id="user"></span>
+                    <button type="button" class="btn btn-outline-light me-2 ms-4" onclick="register()">Register</button>
+                    <button type="button" class="btn btn-warning" onClick="logout()" class="btn btn-primary">Logout</button>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="container authenticated" style="display: none">
-        Logged in as: <span id="user"></span>
-        <div>
-            <button onClick="logout()" class="btn btn-primary">Logout</button>
+</header>
+<div class="container">
+    <div class="unauthenticated">
+        <div class="alert alert-primary" role="alert">
+            Log in to use the chat application!
         </div>
-        <div id="feed">
-
-        </div>
-        <label for="message_field">Message:</label>
-        <input type="text" id="message_field">
-        <button onclick="sendMessage()">Send Message</button>
-
     </div>
-    <script type="text/javascript" src="/webjars/js-cookie/js.cookie.js"></script>
+    <div class="authenticated" style="display: none">
+        <div class="row" >
+            <div class="col-4">
+                <div class="ps-3">
+                    <h2>Chats</h2>
+                    <ul class="list-group" id="userList">
+                        <li class="list-group-item active" aria-current="true">Broadcast</li>
+                        <li class="list-group-item">John</li>
+                        <li class="list-group-item">Peter</li>
+                        <li class="list-group-item">Matti</li>
+                        <li class="list-group-item">Sanna</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-8">
+                <div class="pe-3">
+                    <h2 id="chatName">Broadcast</h2>
+                    <div id="feed" style="height: 300px; overflow: scroll; background-color: #eeeeee">
+                        <p>a</p><br><br><br><br><br><br><br><r></r><br><br><br><br><p>a</p>
+
+                    </div>
+                    <div class="input-group mt-3">
+                        <input class="form-control" type="text" id="message_field" placeholder="message..." aria-describedby="basic-addon-2">
+                        <button class="btn btn-outline-secondary" type="button" id="basic-addon-2" onclick="sendMessage()">Send</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
     <script>
+        var selectedChat = "Broadcast"
+        function loadMessages(){
+            if (selectedChat==="Broadcast"){
+                fetch("/broadcast", {
+                    method: "GET",
+                }).
+                then(response => response.json())
+                    .then(body => createFeed(body))
+            } else {
+                fetch("/chat?with="+selectedChat, {
+                    method: "GET",
+                }).
+                then(response => response.json())
+                    .then(body => createFeed(body))
+            }
+        }
         function createFeed(messages){
             console.log(messages)
             var feed = ""
             messages.forEach(function(message) {
                 console.log(message)
-                feed += `<p><B>${message.name}:</B>  ${message.text}</p>`
+                feed += `<p><B>${message.senderName}:</B>  ${message.text}</p>`
             })
             document.getElementById("feed").innerHTML = feed
         }
+        function selectChat(name){
+            document.getElementById(selectedChat).classList.remove("active")
+            selectedChat = name
+            document.getElementById(selectedChat).classList.add("active")
+            document.getElementById("chatName").textContent = selectedChat
+            loadMessages()
+        }
+        function loadUsers(){
+            fetch("/users", {
+                method: "GET",
+            }).
+            then(response => response.json())
+                .then(users => {
+                    console.log(users)
+                    var feed = `<li class="list-group-item ${'Broadcast'===selectedChat?'active':''}" aria-current="true" onclick="selectChat('Broadcast')" id="Broadcast">Broadcast</li>`
+                    users.forEach(function(user) {
+                        console.log(user)
+                        feed += `    <li class="list-group-item ${user.name===selectedChat?'active':''}" aria-current="true"
+                                        onclick="selectChat('${user.name}')" id=${user.name}>
+                                        ${user.name}
+                                    </li>`
+                    })
+                    document.getElementById("userList").innerHTML = feed})
+        }
         function sendMessage(){
-            // var xhr = new XMLHttpRequest();
-            // xhr.open("POST", "http://localhost:8080/messages", true);
-            // xhr.setRequestHeader('Content-Type', 'application/json');
-            // xhr.send(JSON.stringify({
-            //     name: "ed",
-            //     text: document.getElementById("message_field").value
-            // }));
-            url = "http://localhost:8080/messages"
+            url = "/messages"
             fetch(url, {
                 method : "POST",
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    name: "ed",
-                    text: document.getElementById("message_field").value}),
-                // -- or --
-                // body : JSON.stringify({
-                // user : document.getElementById('user').value,
-                // ...
-                // })
+                    senderName: "ed",
+                    text: document.getElementById("message_field").value,
+                    receiverName: selectedChat})
             }).then(
-                response => response.text() // .json(), etc.
-            ).then(
-                html => console.log(html)
-            ).then(
-                html =>
-                fetch(url, {
-                    method: "GET",
-                }).
-                then(response => response.json())
-                .then(body => createFeed(body))
+                html =>  {document.getElementById("message_field").value=""
+                    loadMessages()}
             );
         }
-    </script>
-    <script type="text/javascript">
+        function register(){
+            url = "/user"
+            fetch(url, {
+                method : "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(
+                html => loadUsers()
+
+            );
+        }
           $.ajaxSetup({
             beforeSend : function(xhr, settings) {
               if (settings.type == 'POST' || settings.type == 'PUT'
@@ -101,6 +174,8 @@
               $("#user").html(data.name);
               $(".unauthenticated").hide();
               $(".authenticated").show();
+                loadUsers();
+                loadMessages();
           });
           var logout = function() {
             $.post("/logout", function() {

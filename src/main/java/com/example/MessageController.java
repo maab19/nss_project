@@ -19,20 +19,24 @@ public class MessageController {
 
     @GetMapping("/messages")
     private List getAllMessages() {
-        System.out.println("aAAAAAAAAAAAAAAAAA");
         return messageService.getAllMessages();
     }
 
-    @GetMapping("/messages/{id}")
-    private Message getMessageById(@PathVariable("id") int id) {
-        return messageService.getMessageById(id);
+    @GetMapping("/chat")
+    private List getMessagesWith(@RequestParam() String with, @AuthenticationPrincipal OAuth2User principal){
+        return messageService.getAllMessagesBetween(with, principal.getAttribute("login"));
+    }
+
+    @GetMapping("/broadcast")
+    private List getMessagesWith(){
+        return messageService.getAllBroadcastMessages();
     }
 
     @PostMapping("/messages")
     private ResponseEntity sendMessage(@AuthenticationPrincipal OAuth2User principal, @RequestBody Message message) {
-        System.out.println(message);
         try {
-            message.setName(principal.getAttribute("login"));
+            if (message.getReceiverName().equals("Broadcast")){message.setReceiverName(null);}
+            message.setSenderName(principal.getAttribute("login"));
             messageService.saveOrUpdate(message);
         } catch (Exception exception) {
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);

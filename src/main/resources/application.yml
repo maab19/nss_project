@@ -1,3 +1,5 @@
+server:
+  address: 192.168.0.103
 spring:
   h2:
     console.enabled: true
@@ -13,8 +15,9 @@ spring:
       client:
         registration:
           github:
-            client-id: your-github-client-id
-            client-secret: your-github-client-secret
+            client-id: your-google-client-id
+            client-secret: your-google-client-secret
+            redirect-uri: http://87.92.27.149:8080/login/oauth2/code/github
           google:
             client-id: your-google-client-id
             client-secret: your-google-client-secret

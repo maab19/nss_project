@@ -10,6 +10,8 @@ To expose the server to the internet:
 
         https://docs.github.com/en/developers/apps/building-oauth-apps/creating-an-oauth-app
 
+    set up port forwarding on port 8080 if necessary
+
 Now run the server and the client application should be available at *internet address*:8080
 
 The client needs to authenticate with github and click register to show up in the user list, after which any other user can send them messages

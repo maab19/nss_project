@@ -13,6 +13,10 @@ CREATE TABLE IF NOT EXISTS public.chat
 ALTER TABLE IF EXISTS public.chat
     OWNER to postgres;
 
+GRANT UPDATE, INSERT, SELECT ON TABLE public.chat TO ochat;
+
+GRANT ALL ON TABLE public.chat TO postgres;
+
 -- Table: public.chat_user
 
 -- DROP TABLE IF EXISTS public.chat_user;
@@ -30,6 +34,10 @@ CREATE TABLE IF NOT EXISTS public.chat_user
 
 ALTER TABLE IF EXISTS public.chat_user
     OWNER to postgres;
+
+GRANT UPDATE, INSERT, SELECT ON TABLE public.chat_user TO ochat;
+
+GRANT ALL ON TABLE public.chat_user TO postgres;
 
 -- Table: public.message
 
@@ -60,6 +68,10 @@ CREATE TABLE IF NOT EXISTS public.message
 ALTER TABLE IF EXISTS public.message
     OWNER to postgres;
 
+GRANT UPDATE, INSERT, SELECT ON TABLE public.message TO ochat;
+
+GRANT ALL ON TABLE public.message TO postgres;
+
 -- Table: public.users_in_chat
 
 -- DROP TABLE IF EXISTS public.users_in_chat;
@@ -84,3 +96,7 @@ CREATE TABLE IF NOT EXISTS public.users_in_chat
 
 ALTER TABLE IF EXISTS public.users_in_chat
     OWNER to postgres;
+
+GRANT UPDATE, INSERT, SELECT ON TABLE public.users_in_chat TO ochat;
+
+GRANT ALL ON TABLE public.users_in_chat TO postgres;

@@ -23,7 +23,7 @@ spring:
         registration:
           ochat:
             client-id: ochat
-            client-secret:
+            client-secret: ZV8uwJFoIMCym3cQSxt3r80bmG3pzKJC
             client-name: OChat
             redirect-uri: http://localhost:8080/login/oauth2/code/ochat
             authorization-grant-type: authorization_code

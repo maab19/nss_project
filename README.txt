@@ -1,16 +1,16 @@
-!!! Caution: This setup is only for testing purposes. For production deployment passwords and configurations need to be changed !!!
+!!! Caution: This setup is only for testing purposes. For production deployment passwords, secrets and configurations need to be changed !!!
 
 Database setup:
-Install postgres version 15 on your system like described here: https://www.postgresql.org/download/
+Install postgres on your system like described here: https://www.postgresql.org/download/
 We also recommend to install pgadmin4 as GUI. On Windows it can be installed with the postgres installer for Linux it is probably available in the repos otherwise see here: https://www.pgadmin.org/download/
 
 In pgadmin connect to the database server
-Then right click on the postgres-database on the left sidebar and select SQL-
-Open the databaseSetup/createDb.sql file in the SQL- and execute it.
-Now open the databaseSetup/createUser.sql in the SQL- and execute it.
+Then right click on the postgres-database on the left sidebar and select Query-Tool
+Open the databaseSetup/createDb.sql file in the Query-Tool and execute it.
+Now open the databaseSetup/createUser.sql in the Query-Tool and execute it.
 Then right click on the database server on the left sidebar and click Refresh
-Then right click on the newly created ochat-database on the left sidebar and select SQL-
-Now open the databaseSetup/createTables.sql in the SQL- and execute it.
+Then right click on the newly created ochat-database on the left sidebar and select Query-Tool
+Now open the databaseSetup/createTables.sql in the Query-Tool and execute it.
 
 Add the username 'ochat' and password 'passwd' of the db user in the OChat/src/main/resources/application.yml
 
@@ -19,6 +19,7 @@ The authorization server is almost fully configured.
 To support login with github some extra configuration is needed.
 At first create a github OAuth application and copy its client id and secret Like described here:
           https://docs.github.com/en/developers/apps/building-oauth-apps/creating-an-oauth-app
+          -Use "http://localhost:8081" as Homepage URL and Authorization Callback URL
 Then start the keycloak server:
     -Open a terminal
     -Navigate to the directory keycloak-19.0.3
@@ -31,21 +32,14 @@ Login with the credentials:
     password: admin
 Select the dropdown menu on the top left and select OChat
 Click on Identity providers in the left sidebar
+Select GitHub from the listed providers
+Paste the copied client id and client secret in the client id and client secret field
+Press Add
 
-The application.yml file needs some configuration for the application to work.
-
-To expose the server to the internet:
-
-    change server.address to the LAN address of the computer
-
-    change the redirect url to use the internet address of the computer
-
-    create a github OAuth application and copy its client id and secret
-
-        https://docs.github.com/en/developers/apps/building-oauth-apps/creating-an-oauth-app
-
-    set up port forwarding on port 8080 if necessary
-
-Now run the server and the client application should be available at *internet address*:8080
-
-The client needs to authenticate with github and click register to show up in the user list, after which any other user can send them messages
+Running the application:
+You have to load all dependencies and build the project before you can run it.
+For that we recommend to use an IDE like IntelliJ IDEA.
+Open the OChat folder as a project in IntelliJ. IntelliJ should now load all dependencies for you.
+After that you can try to build the project.
+Before you run the project ensure that the database and the keycloak server are running
+Then you can run the application from IntelliJ using Shift+F10

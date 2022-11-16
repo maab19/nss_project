@@ -5,8 +5,8 @@ spring:
     console.enabled: true
   datasource:
     url: jdbc:postgresql://localhost:5432/ochat
-    username:
-    password:
+    username: #DB-user username
+    password: #DB-user password
     initialization-mode: always
     platform: postgres
   jpa:

@@ -1,4 +1,36 @@
-!!! Caution: This setup is only for testing purposes. For production deployment passwords, secrets and configurations need to be changed !!!
+!!! Caution: This setup is only for testing purposes. For production deployment passwords, secrets and some configurations need to be changed !!!
+1. Use the provided Virtual Box image
+We provide with ochat.ova a virtual box image in which the application is already set up.
+
+To use it install VirtualBox:
+And import the image.
+Important credentials:
+    Linux user:
+        username: ochat
+        password: ochat
+        sudo password: ochat
+    pgadmin4 master password: passwd
+    DB super user:
+        username: postgres
+        password: passwd
+    keycloak admin:
+        username: admin
+        password: admin
+To run the application at first start the keycloak server:
+    1. Open a terminal
+    2. Use the command: cd ~/OChat/keycloak-19.0.3
+    3. followed by the command: bin/kc.sh start-dev --http-port=8081
+Afterwards open IntelliJ, which is already installed
+The correct project should already be opened.
+If not open the folder ~/OChat/OChat as a project in IntelliJ
+Then press the run button or Shift+F10 to start the application
+You can now reach the application by opening a browser and entering localhost:8080 in the URL bar and pressing enter
+
+3rd party login with Github is not setup out of the box.
+To set it up follow the steps described below under: Keycloak authorization server setup:
+
+
+2. Set up the application on your own device
 
 Database setup:
 Install postgres on your system like described here: https://www.postgresql.org/download/
@@ -26,6 +58,7 @@ Then start the keycloak server:
     -On Linux run the command: bin/kc.sh start-dev --http-port=8081
     -On Windows run the command: bin/kc.bat start-dev --http-port=8081
 Now you can open a browser and enter in the url bar: localhost:8081
+and press enter
 Click on 'Administration Console'
 Login with the credentials:
     username: admin
